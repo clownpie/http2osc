@@ -11,8 +11,10 @@ class Event(Resource):
         self.eventType = eventType
 
     def render_GET(self, request):
+        # TODO figure some way to hook into request and set requestgetuser
+        user = ring_leader.getuser(request)
         request.setHeader("context-type", "text/plain")
-        return self.eventType + '+'
+        return self.eventType + '+' + str(user.uid)
 
     def render_POST(self, request):
         return self.eventType + '-'
@@ -28,34 +30,43 @@ class EventScheduler(Resource):
         return 'et phone home'
 
 class RingLeader(Resource):
-    def __init__():
+    def __init__(self):
+        Resource.__init__(self)
         self.uid_to_user = {}
 
-    def getuser(request):
+    def getuser(self, request):
+        if hasattr(request, 'user'):
+            print 'existing user %s' % request.user.getid()
+            return request.user
+
         uid = request.getSession().uid
         user = self.uid_to_user.get(uid)
         if not user:
             user = User(uid)
-            self.uid_to_user.put(user.getid(), user)
+            self.uid_to_user[user.getid()] = user
 
+        request.user = user
         return user
 
     def render_GET(self, request):
-        return "welcome home"
+        return "welcome home number " + request.user.getid()
 
 class User():
     def __init__(self, session_uid):
-        self.session_uid = uid
+        self.session_uid = session_uid
         self.uid = User.uid
         User.uid += 1
+        print 'new user', self.uid
 
-    def getid():
+    def getid(self):
         return self.uid
 
-root = RingLeader()
-root.putChild('e', EventScheduler())
+User.uid = 0
 
-factory = Site(root)
+ring_leader = RingLeader()
+ring_leader.putChild('e', EventScheduler())
+
+factory = Site(ring_leader)
 
 reactor.listenTCP(8080, factory)
 reactor.run()
