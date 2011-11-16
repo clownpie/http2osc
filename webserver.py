@@ -4,6 +4,8 @@ from twisted.web.server import Site
 from twisted.web.resource import Resource
 from twisted.internet import reactor
 
+from osc import OscSender
+
 class Event(Resource):
 
     def __init__(self, eventType):
@@ -67,7 +69,9 @@ ring_leader = RingLeader()
 ring_leader.putChild('e', EventScheduler())
 
 factory = Site(ring_leader)
-
 reactor.listenTCP(8080, factory)
+
+ringer_leader.oscSender = OscSender(16666) # adds UDP listener to reactor
+
 reactor.run()
 
