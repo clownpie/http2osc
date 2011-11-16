@@ -16,6 +16,8 @@ class Event(Resource):
         # TODO figure some way to hook into request and set requestgetuser
         user = ring_leader.getuser(request)
         request.setHeader("context-type", "text/plain")
+        ring_leader.oscSender.send(
+
         return self.eventType + '+' + str(user.uid)
 
     def render_POST(self, request):
@@ -71,7 +73,7 @@ ring_leader.putChild('e', EventScheduler())
 factory = Site(ring_leader)
 reactor.listenTCP(8080, factory)
 
-ringer_leader.oscSender = OscSender(16666) # adds UDP listener to reactor
+ring_leader.oscSender = OscSender(reactor, 16666) # adds UDP listener to reactor
 
 reactor.run()
 
