@@ -28,8 +28,29 @@ class EventScheduler(Resource):
         return 'et phone home'
 
 class RingLeader(Resource):
+    def __init__():
+        self.uid_to_user = {}
+
+    def getuser(request):
+        uid = request.getSession().uid
+        user = self.uid_to_user.get(uid)
+        if not user:
+            user = User(uid)
+            self.uid_to_user.put(user.getid(), user)
+
+        return user
+
     def render_GET(self, request):
         return "welcome home"
+
+class User():
+    def __init__(self, session_uid):
+        self.session_uid = uid
+        self.uid = User.uid
+        User.uid += 1
+
+    def getid():
+        return self.uid
 
 root = RingLeader()
 root.putChild('e', EventScheduler())
