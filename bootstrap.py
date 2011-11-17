@@ -52,7 +52,6 @@ class User():
         self.session_uid = session_uid
         self.uid = User.uid
         User.uid += 1
-        print 'new user', self.uid
 
     def getid(self):
         return self.uid
