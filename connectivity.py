@@ -2,8 +2,9 @@
 from txosc import osc, async
 
 def write_event(context, path):
-    message = osc.Message(path, context.user)
-    context.event_writer.write_event(message)
+    print path, context.getuser().uid
+    #message = osc.Message(path, context.getuser())
+    #context.event_writer.write_event(message)
 
 class OscWriter():
     def __init__(self, reactor, port, host='224.0.0.69'):

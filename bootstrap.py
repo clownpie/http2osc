@@ -12,29 +12,37 @@ class RequestBootstrap(Request):
     basically just for hooking to a request and setting some values
     """
     def __init__(self, *args, **kw):
-        Request.__init(self, args, kw)
-        self.context = Context()
+        Request.__init__(self, *args, **kw)
+        self.context = Context(self)
 
 class Context():
     """
     holds anything that everybody might find useful
     """
-    def __init__(self, user, event_writer):
-        uid = self.getSession().uid
-        self.user = users.getuser(uid)
+    def __init__(self, request):
         self.event_writer = osc_writer
+        self.request = request
+
+    def getuser(self):
+        if not hasattr(self, 'user'):
+            session_uid = self.request.getSession().uid
+            self.user = users.getuser(session_uid)
+
+        return self.user
 
 class Users():
     """
     glorified dict
     """
+    def __init__(self):
+        self.session_uid_to_user = {}
+
     def getuser(self, session_uid):
-        user = self.session_uid_to_user[session_uid]
-        if not user:
+        if session_uid not in self.session_uid_to_user:
             user = User(session_uid)
             self.session_uid_to_user[session_uid] = user
 
-        return user
+        return self.session_uid_to_user[session_uid]
 
 class User():
     """
