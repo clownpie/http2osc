@@ -1,1 +1,7 @@
-A snappy way to turn HTTP requests into an OSC datagram
+A snappy way to turn HTTP requests into an OSC datagram.  Written on top of twisted and txosc
+
+to run HTTP server/UDP sender: ./bootstrap.py
+
+to for UDP packets being sent by bootstrap: ./udplistener.py
+
+to send HTTP requests navagate to <a href="http://localhost:8080/e/fire">http://localhost:8080/e/fire</a>.  fire is an event.  you can use whatever event you want
